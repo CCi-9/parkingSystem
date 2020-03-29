@@ -45,7 +45,7 @@ public class CarController {
 
     @RequestMapping(value = "changeCar",method = RequestMethod.POST)
     public ResponseWrapper<Car> changeCar(@RequestParam int id, @RequestParam String licence, @RequestParam String currentLicence){
-        carService.changeCar(id,licence,currentLicence);
+        carService.changeCar(id,licence,currentLicence );
         return new ResponseWrapper<>(ResponseStatus.OK, "");
     }
 
