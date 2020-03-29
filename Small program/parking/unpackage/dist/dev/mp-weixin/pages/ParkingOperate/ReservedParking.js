@@ -270,13 +270,16 @@ __webpack_require__.r(__webpack_exports__);
                                    					}
                                    				})*/
       var that = this;
-      if (this.fee == 0.0) {
+      if (this.fee == 0.0 && this.mode == "预付费") {
         wx.showToast({
           title: "请选择时长",
           icon: 'none',
           duration: 2000 });
 
         return;
+      }
+      if (this.mode == "后付费") {
+        this.fee = 0.0;
       }
       wx.request({
         url: "http://localhost:8089/smallProgram/reservedParking",

@@ -25,7 +25,7 @@ public class ParkingController {
 
     @RequestMapping(value = "reservedParking",method = RequestMethod.POST)
     public ResponseWrapper<User> reservedParking(@RequestParam int id, @RequestParam String phone, @RequestParam double fee){
-        System.out.println("reservedParking");
+        System.out.println("reservedParking:" + fee);
         String result = parkingService.reservedParking(id,phone, fee);
         return new ResponseWrapper<>(ResponseStatus.OK,result,userService.checkMessage("id",String.valueOf(id)));
     }
