@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "AD组件示例",
+  "usingComponents": {
+    "ad-tabbar": "/components/andy-ADTabbar/andy-ADTabbar",
+    "ad-tabbar-item": "/components/andy-ADTabbar/andy-ADTabbarItem"
+  }
+}

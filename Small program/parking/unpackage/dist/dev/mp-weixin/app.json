@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/ParkingOperate/ParkingOperate",
+    "pages/PersonalCenter/PersonalCenter",
+    "pages/PersonalCenter/MyMessage",
+    "pages/index/registration",
+    "pages/PersonalCenter/ParkingRecord",
+    "pages/PersonalCenter/BandingCar",
+    "pages/PersonalCenter/MyWallet",
+    "pages/ParkingOperate/ReservedParking",
+    "pages/ParkingOperate/TimeExpand",
+    "pages/ParkingOperate/QuicklyRecharge",
+    "pages/ParkingOperate/MakeUpFee"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationStyle": "custom"
+  },
+  "usingComponents": {
+    "person": "/pages/PersonalCenter/PersonalCenter",
+    "park": "/pages/ParkingOperate/ParkingOperate",
+    "nav-bar": "/components/uni-nav-bar/uni-nav-bar",
+    "c-btn": "/components/cc-button/cc-button",
+    "uni-list": "/components/uni-list/uni-list",
+    "uni-list-item": "/components/uni-list-item/uni-list-item"
+  },
+  "sitemapLocation": "sitemap77.json"
+}

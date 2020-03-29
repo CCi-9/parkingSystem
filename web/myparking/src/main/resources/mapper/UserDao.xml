@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.intelligentparking.myparking.DAO.UserDao">
+    <insert id="addUser" parameterType="User">
+        insert into user (openid,username,phone,sex,balance)
+		    values(#{openid},#{username},#{phone},#{sex},#{balance})
+    </insert>
+
+    <update id="changMsg" parameterType="User">
+        update user set
+            username = #{username},
+            phone = #{phone},
+            sex = #{sex}
+        where id = #{id}
+    </update>
+
+    <update id="recharge">
+        update user set
+            balance = #{money} + balance
+        where id = #{id}
+    </update>
+</mapper>

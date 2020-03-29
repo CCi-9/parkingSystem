@@ -1,0 +1,61 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "AD组件示例",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},{
+			"path": "pages/ParkingOperate/ParkingOperate",
+			"style": {
+			}
+		},{
+			"path": "pages/PersonalCenter/PersonalCenter",
+			"style": {
+			}
+		},{
+            "path" : "pages/PersonalCenter/MyMessage",
+            "style" : {}
+        },
+		{
+            "path" : "pages/index/registration",
+            "style" : {
+                "navigationBarTitleText" : "注册"
+            }
+        }
+        ,{
+            "path" : "pages/PersonalCenter/ParkingRecord",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/PersonalCenter/BandingCar",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/PersonalCenter/MyWallet",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/ParkingOperate/ReservedParking",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/ParkingOperate/TimeExpand",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/ParkingOperate/QuicklyRecharge",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/ParkingOperate/MakeUpFee",
+            "style" : {}
+        }
+    ],
+	"globalStyle": {
+		"navigationStyle": "custom"
+	}
+}

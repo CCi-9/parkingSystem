@@ -1,0 +1,20 @@
+
+.top.data-v-78957d8c {
+	height: 250rpx;
+	width: 100%;
+	background-color: #dbf3e5;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	        justify-content: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	        align-items: center;
+}
+.avator.data-v-78957d8c {
+	text-align: center;
+	font-size: larger;
+}
+

@@ -1,0 +1,1 @@
+<view class="tabItem" data-cur="{{dataCur}}" data-event-opts="{{[['tap',[['onClick',['$event']]]]]}}" bindtap="__e"><image class="tabIcon" src="{{icon}}"></image><view style="{{'color:'+(textColor)+';'+('font-size:'+(textSize+'rpx')+';')}}">{{text}}</view></view>

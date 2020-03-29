@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.intelligentparking.myparking.DAO.CarDao">
+    <resultMap id="carRecordMap" type="ParkingRecord">
+        <id column="id" property="id"></id>
+        <result column="carLicence" property="carLicence"></result>
+        <result column="startTime" property="startTime"></result>
+        <result column="endTime" property="endTime"></result>
+        <result column="fee" property="fee"></result>
+        <result column="uid" property="uid"></result>
+    </resultMap>
+
+    <resultMap id="carMap" type="Car">
+        <id column="id" property="id"></id>
+        <result column="licence" property="licence"></result>
+        <result column="uid" property="uid"></result>
+    </resultMap>
+
+    <select id="getParkingRecordById" resultMap="carRecordMap">
+        select * from parkingrecord where uid = #{uid};
+    </select>
+
+    <select id="getCarById" resultMap="carMap">
+        select * from car where uid = #{uid};
+    </select>
+
+    <insert id="addCar" parameterType="Car">
+        insert into car (licence,uid)
+		    values(#{licence},#{uid})
+    </insert>
+
+    <update id="changeCar" parameterType="Car">
+        update car set
+            licence = #{licence}
+        where licence = #{currentLicence}
+    </update>
+
+</mapper>

@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "plate-number": "/components/plate-number/plateNumber"
+  }
+}
