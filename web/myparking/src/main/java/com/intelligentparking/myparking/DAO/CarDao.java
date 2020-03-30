@@ -11,6 +11,8 @@ public interface CarDao {
 
     List<Car> getCarById(int uid);
 
+    Car getCarByLicence(String licence);
+
     void addCar(@Param("uid") int uid, @Param("licence") String licence);
 
     void changeCar(@Param("uid") int uid, @Param("licence") String licence, @Param("currentLicence") String currentLicence);

@@ -125,6 +125,7 @@
 						console.log(result)
 					}
 				})*/
+				
 				let that = this
 				if(this.fee == 0.0 && this.mode ==  "预付费") {
 					wx.showToast({
@@ -138,7 +139,7 @@
 					this.fee = 0.0
 				}
 				wx.request({
-					url: "http://localhost:8089/smallProgram/reservedParking",
+					url: "http://" + this.$host + "/smallProgram/reservedParking",
 					method: "POST",
 					data: {
 						id: this.id,

@@ -195,11 +195,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
 {
   components: {
     helangCheckbox: helangCheckbox },
@@ -207,25 +202,49 @@ __webpack_require__.r(__webpack_exports__);
 
   data: function data() {
     return {
+      bgcolor1: "linear-gradient(-45deg, #C9E2B3 0%, rgba(12, 255, 182, 1) 100%);",
+      bgcolor2: "linear-gradient(-45deg, #C9E2B3 0%, rgba(222, 255, 243, 1) 100%);",
       current: "粤A C1234",
       mode: '预付费',
       hour: 1,
       minute: 0,
       fee: 0,
       value: [0, 0],
-      hours: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       minutes: [0, 30],
-      balance: getApp().globalData.userMsg.balance };
+      phone: getApp().globalData.userMsg.phone,
+      balance: getApp().globalData.userMsg.balance,
+      id: getApp().globalData.userMsg.id };
 
   },
   onLoad: function onLoad() {
+    var that = this;
+    wx.request({
+      url: "http://" + this.$host + "/smallProgram/getParkingCar",
+      method: "GET",
+      data: {
+        phone: this.phone },
+
+      header: {
+        'content-type': 'application/x-www-form-urlencoded' //用于提交@RequestParam，且接受是一个一个字段
+      },
+      success: function success(result) {
+        that.current = result.data.data;
+      } });
+
+
     this.$refs.checkbox.set({
       type: 'radio', // 类型：单选框
       index: 0, // 默认选中的项
       column: 2, // 分列
-      list: [
-      { id: 0, text: '预付费' },
-      { id: 1, text: '后付费' }]
+      list: [{
+        id: 0,
+        text: '预付费' },
+
+      {
+        id: 1,
+        text: '后付费' }]
+
       // 列表数据
     });
   },
@@ -242,7 +261,52 @@ __webpack_require__.r(__webpack_exports__);
       var val = e.detail.value;
       this.hour = this.hours[val[0]];
       this.minute = this.minutes[val[1]];
-      this.fee = this.hour * 2;
+      var fee1 = this.minute == 0 ? 0 : 1.5;
+      this.fee = this.hour * 2 + fee1;
+    },
+    delay: function delay() {
+      uni.navigateTo({
+        url: "/pages/index/index" }),
+      3000;
+    },
+    timeExpand: function timeExpand() {
+
+      var that = this;
+      if (this.fee == 0.0 && this.mode == "预付费") {
+        wx.showToast({
+          title: "请选择时长",
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      if (this.mode == "后付费") {
+        this.fee = 0.0;
+      }
+
+      wx.request({
+        url: "http://" + this.$host + "/smallProgram/timeExpand",
+        method: "POST",
+        data: {
+          id: this.id,
+          phone: this.phone,
+          fee: this.fee },
+
+        header: {
+          'content-type': 'application/x-www-form-urlencoded' //用于提交@RequestParam，且接受是一个一个字段
+        },
+        success: function success(result) {
+          getApp().globalData.userMsg = result.data.data;
+          wx.showToast({
+            title: result.data.message,
+            icon: 'none',
+            duration: 2000,
+            success: function success(result) {
+              setTimeout(that.delay, 1000);
+            } });
+
+        } });
+
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

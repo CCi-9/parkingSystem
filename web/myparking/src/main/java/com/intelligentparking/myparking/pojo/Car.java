@@ -4,6 +4,7 @@ public class Car {
     private int id;
     private String licence;
     private int uid;
+    private User user;
 
     @Override
     public String toString() {
@@ -11,7 +12,16 @@ public class Car {
                 "id=" + id +
                 ", licence='" + licence + '\'' +
                 ", uid=" + uid +
+                ", user=" + user +
                 '}';
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getId() {

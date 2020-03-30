@@ -4,8 +4,10 @@ import com.intelligentparking.myparking.DAO.CarDao;
 import com.intelligentparking.myparking.DAO.RechargeDao;
 import com.intelligentparking.myparking.DAO.UserDao;
 import com.intelligentparking.myparking.Service.SmallProgram.ParkingService;
+import com.intelligentparking.myparking.model.SystemConstant;
 import com.intelligentparking.myparking.pojo.Car;
 import com.intelligentparking.myparking.pojo.ParkingBook;
+import com.intelligentparking.myparking.pojo.ParkingCar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,11 +27,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service("parkingServiceImpl")
 public class ParkingServiceImpl implements ParkingService {
     private static final Logger logger = LoggerFactory.getLogger(ParkingServiceImpl.class);
-    private final int Max_Parking_Count = 0;
-    private AtomicInteger currentParkingCount = new AtomicInteger(Max_Parking_Count);
+    private AtomicInteger currentParkingCount = new AtomicInteger(SystemConstant.Max_Parking_Count);
     private Map<String, ParkingBook> currentBook = new ConcurrentHashMap<String, ParkingBook>(64);
     private ConcurrentLinkedQueue<ParkingBook> waitQueue = new ConcurrentLinkedQueue<ParkingBook>();
-    private Map<String, ParkingBook> currentParkingCar = new HashMap<String, ParkingBook>();
+    private Map<String, ParkingCar> currentParkingCar = new HashMap<String, ParkingCar>();
+    private Map<String, String> phone_licence = new HashMap<String, String>();
 
     @Resource
     private UserDao userDao;
@@ -69,6 +71,10 @@ public class ParkingServiceImpl implements ParkingService {
             }
         }
 
+        if(phone_licence.get(phone) != null){
+            return "您当前已经有停放车了";
+        }
+
         if (currentParkingCount.get() == 0) {
             logger.info("车位已满,请排队");
             waitQueue.offer(new ParkingBook(id, phone, fee, LocalDateTime.now()));
@@ -90,6 +96,14 @@ public class ParkingServiceImpl implements ParkingService {
     public void run() {
         logger.info("开始检测是否有预定过期了");
         ParkingBook waitBook;
+
+        Iterator iterator = currentParkingCar.values().iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+
+        logger.info("当前停放车辆数：" + currentParkingCar.size());
+        logger.info("当前停剩余车位：" + currentParkingCount.get());
         if (currentBook.size() == 0) {
             logger.info("当前无预定，检测结束");
             return;
@@ -109,7 +123,7 @@ public class ParkingServiceImpl implements ParkingService {
             }
         }
 
-        logger.info("current:" + currentParkingCount.get());
+        logger.info("当前预定数量:" + currentBook.size());
 
 
         while ((!waitQueue.isEmpty())) {
@@ -138,12 +152,47 @@ public class ParkingServiceImpl implements ParkingService {
         logger.info("检测结束");
     }
 
-    public String parking(String licence) {
-//        Car car = carDao.getCarByLicence(licence);
-//        System.out.println(car);
-        return null;
+    public void parking(String licence) {
+        Car car = carDao.getCarByLicence(licence);
+        ParkingCar parkingCar;
+        ParkingBook parkingBook;
+        double fee;
+        //判断是否为注册用户
+        if (car != null) {
+
+            String phone = car.getUser().getPhone();
+            parkingBook = currentBook.get(phone);
+            if (parkingBook != null) { //判断是否为预定的
+                fee = parkingBook.getFee();
+                currentBook.remove(phone);
+                logger.info("预定客户已经在时间内停放");
+            } else {  //非预定客户
+                fee = 0.0;
+                currentParkingCount.decrementAndGet();
+                logger.info("未预定客户直接停放");
+            }
+            parkingCar = new ParkingCar(licence, fee, LocalDateTime.now(), phone);
+            phone_licence.put(phone,licence);
+        } else {
+
+            logger.info("不知道啥客户直接停放");
+            parkingCar = new ParkingCar(licence, 0.0, LocalDateTime.now(), null);
+            currentParkingCount.decrementAndGet();
+
+        }
+        currentParkingCar.put(licence, parkingCar);
     }
 
+    public String getParkingCar(String phone){
+        return phone_licence.get(phone);
+    }
+
+    public void timeExpand(int id, String phone, double fee){
+        String licence = phone_licence.get(phone);
+        ParkingCar car = currentParkingCar.get(licence);
+        car.setFee(car.getFee() + fee);
+        parkingRecord(id,-fee);
+    }
     private void parkingRecord(int id, double fee) {
         if (fee == 0.0) return; //为0说明是后付款，没必要
         userDao.recharge(id, fee);
