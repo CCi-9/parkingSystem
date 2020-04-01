@@ -9,6 +9,6 @@ public interface RecordService {
     List<ParkingRecord> getParkingRecordById(int id);
     List<RechargeRecord> getRechargeRecordByID(int id, char all);
 
-    void addRechargeRecord(double fee, int id);
+    void addRechargeRecord(double fee, int id, String remark);
 
 }

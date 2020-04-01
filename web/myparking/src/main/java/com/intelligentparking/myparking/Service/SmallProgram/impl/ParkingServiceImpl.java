@@ -1,6 +1,7 @@
 package com.intelligentparking.myparking.Service.SmallProgram.impl;
 
 import com.intelligentparking.myparking.DAO.CarDao;
+import com.intelligentparking.myparking.DAO.ParkingRecordDao;
 import com.intelligentparking.myparking.DAO.RechargeDao;
 import com.intelligentparking.myparking.DAO.UserDao;
 import com.intelligentparking.myparking.Service.SmallProgram.ParkingService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,10 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ParkingServiceImpl implements ParkingService {
     private static final Logger logger = LoggerFactory.getLogger(ParkingServiceImpl.class);
     private AtomicInteger currentParkingCount = new AtomicInteger(SystemConstant.Max_Parking_Count);
-    private Map<String, ParkingBook> currentBook = new ConcurrentHashMap<String, ParkingBook>(64);
+    private Map<String, ParkingBook> currentBook = new ConcurrentHashMap<String, ParkingBook>(64);  // phone - ParkingBook
     private ConcurrentLinkedQueue<ParkingBook> waitQueue = new ConcurrentLinkedQueue<ParkingBook>();
-    private Map<String, ParkingCar> currentParkingCar = new HashMap<String, ParkingCar>();
-    private Map<String, String> phone_licence = new HashMap<String, String>();
+    private Map<String, ParkingCar> currentParkingCar = new HashMap<String, ParkingCar>(); //licence  - ParkingCar
+    private Map<String, String> phone_licence = new HashMap<String, String>();  //phone - licence
 
     @Resource
     private UserDao userDao;
@@ -42,6 +44,8 @@ public class ParkingServiceImpl implements ParkingService {
     @Resource
     private RechargeDao rechargeDao;
 
+    @Resource
+    private ParkingRecordDao parkingRecordDao;
 
     public ParkingServiceImpl() {
         ParkingBook pb1 = new ParkingBook(7, "13532736612", 10.0);
@@ -71,7 +75,7 @@ public class ParkingServiceImpl implements ParkingService {
             }
         }
 
-        if(phone_licence.get(phone) != null){
+        if (phone_licence.get(phone) != null) {
             return "您当前已经有停放车了";
         }
 
@@ -98,7 +102,7 @@ public class ParkingServiceImpl implements ParkingService {
         ParkingBook waitBook;
 
         Iterator iterator = currentParkingCar.values().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             System.out.println(iterator.next());
         }
 
@@ -172,7 +176,7 @@ public class ParkingServiceImpl implements ParkingService {
                 logger.info("未预定客户直接停放");
             }
             parkingCar = new ParkingCar(licence, fee, LocalDateTime.now(), phone);
-            phone_licence.put(phone,licence);
+            phone_licence.put(phone, licence);
         } else {
 
             logger.info("不知道啥客户直接停放");
@@ -181,21 +185,64 @@ public class ParkingServiceImpl implements ParkingService {
 
         }
         currentParkingCar.put(licence, parkingCar);
+        logger.info("当前剩余车位" + currentParkingCount.get());
     }
 
-    public String getParkingCar(String phone){
+    public void leave(String licence) {
+        ParkingCar car = currentParkingCar.get(licence);
+        double paid = car.getFee();  //已经付的钱
+        LocalDateTime leaveTime = LocalDateTime.now();  //离开的时间
+
+        //计算停车时间
+        Duration duration = Duration.between(car.getParkingTime(), leaveTime);
+        long parkingDuration = duration.toHours();
+        if (parkingDuration == 0) {
+            parkingDuration = 1; //不够一小时按一小时计算
+        }
+
+        //计算应付车费
+        double payable = parkingDuration * 2;
+
+        //退款
+        double refund = paid - payable;
+        Car carMsg = carDao.getCarByLicence(licence);
+        if (carMsg != null) {
+            //注册用户停车记录
+            int id = carMsg.getUid();
+            parkingRecord(id, refund);
+            phone_licence.remove(carMsg.getUser().getPhone());
+
+            parkingRecordDao.addParkingRecord(licence, car.getParkingTime(), leaveTime, payable, String.valueOf(id));
+        } else {
+            //添加非注册用户停车记录
+            parkingRecordDao.addParkingRecord(licence, car.getParkingTime(), leaveTime, payable, null);
+        }
+        currentParkingCar.remove(licence);
+
+        System.out.println("共停了 " + parkingDuration + " 小时");
+        logger.info("当前剩余车位" + currentParkingCount.incrementAndGet());
+    }
+
+    public String getParkingCar(String phone) {
         return phone_licence.get(phone);
     }
 
-    public void timeExpand(int id, String phone, double fee){
+    public void timeExpand(int id, String phone, double fee) {
         String licence = phone_licence.get(phone);
         ParkingCar car = currentParkingCar.get(licence);
         car.setFee(car.getFee() + fee);
-        parkingRecord(id,-fee);
+        parkingRecord(id, -fee);
     }
+
     private void parkingRecord(int id, double fee) {
         if (fee == 0.0) return; //为0说明是后付款，没必要
         userDao.recharge(id, fee);
-        rechargeDao.addRechargeRecord(fee, id);
+        String remark;
+        if (fee < 0) {
+            remark = "扣费";
+        } else {
+            remark = "退款";
+        }
+        rechargeDao.addRechargeRecord(fee, id, remark);
     }
 }

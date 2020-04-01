@@ -1,14 +1,21 @@
 package com.intelligentparking.myparking.pojo;
 
-import java.sql.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDateTime;
 
 public class ParkingRecord {
     private int id;
     private String carLicence;
-    private Date startTime;
-    private Date endTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endTime;
     private double fee;
     private int uid;
+    private User user;
 
     @Override
     public String toString() {
@@ -38,19 +45,19 @@ public class ParkingRecord {
         this.carLicence = carLicence;
     }
 
-    public Date getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
@@ -68,5 +75,13 @@ public class ParkingRecord {
 
     public void setUid(int uid) {
         this.uid = uid;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

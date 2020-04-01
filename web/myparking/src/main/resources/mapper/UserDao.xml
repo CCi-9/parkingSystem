@@ -20,4 +20,8 @@
             balance = #{money} + balance
         where id = #{id}
     </update>
+
+    <select id="getUserByPage" resultType="User">
+        select * from user
+    </select>
 </mapper>

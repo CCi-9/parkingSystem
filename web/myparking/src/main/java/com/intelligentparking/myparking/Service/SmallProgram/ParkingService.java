@@ -8,4 +8,6 @@ public interface ParkingService {
     String getParkingCar(String phone);
 
     void timeExpand(int id, String phone, double fee);
+
+    void leave(String licence);
 }

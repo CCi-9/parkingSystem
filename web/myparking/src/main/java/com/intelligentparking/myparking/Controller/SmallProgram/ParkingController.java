@@ -41,6 +41,12 @@ public class ParkingController {
         return null;
     }
 
+    @RequestMapping(value = "leave",method = RequestMethod.GET) //停车
+    public ResponseWrapper<Integer> leave(@RequestParam String licence){
+        parkingService.leave(licence);
+        return null;
+    }
+
     @RequestMapping(value = "getParkingCar",method = RequestMethod.GET)  //获取当前正在停的车
     public ResponseWrapper<String> getParkingCar(@RequestParam String phone){
         String licence = parkingService.getParkingCar(phone);

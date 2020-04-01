@@ -195,6 +195,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
 {
   components: {
     helangCheckbox: helangCheckbox },
@@ -202,6 +205,8 @@ __webpack_require__.r(__webpack_exports__);
 
   data: function data() {
     return {
+      bgcolor1: "linear-gradient(-45deg, #C9E2B3 0%, rgba(12, 255, 182, 1) 100%);",
+      bgcolor2: "linear-gradient(-45deg, #C9E2B3 0%, rgba(222, 255, 243, 1) 100%);",
       current: 7,
       mode: '预付费',
       hour: 1,
@@ -221,10 +226,17 @@ __webpack_require__.r(__webpack_exports__);
       url: "http://" + this.$host + "/smallProgram/getParkingCount",
       method: "GET",
       success: function success(result) {
-
         that.current = result.data.data;
       } });
 
+
+    if (this.balance <= 0) {
+      wx.showToast({
+        title: '当前余额不足，请及时充值，以免影响您正常使用',
+        icon: 'none',
+        duration: 3000 });
+
+    }
 
     this.$refs.checkbox.set({
       type: 'radio', // 类型：单选框

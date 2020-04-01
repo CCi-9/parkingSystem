@@ -41,7 +41,10 @@
 			<view style="margin: 30px 10px ;">
 				<text style="color: #ff7801;font-size: xx-large;">￥{{fee}}</text><text style="font-size: small;">/账户余额￥{{balance.toFixed(2)}}元</text>
 			</view>
-			<cBtn width='90%' color="#000" fontsize="45rpx" @cctap="reserved" bgcolor='linear-gradient(-45deg, #C9E2B3 0%, rgba(12, 255, 182, 1) 100%);'>
+			<cBtn
+			:isdisable = "balance <= 0"
+			:bgcolor='balance <= 0 ? bgcolor2 : bgcolor1 '
+			 width='90%' color="#000" fontsize="45rpx" @cctap="reserved">
 				确认
 			</cBtn>
 		</view>
@@ -58,6 +61,8 @@
 		},
 		data() {
 			return {
+				bgcolor1: "linear-gradient(-45deg, #C9E2B3 0%, rgba(12, 255, 182, 1) 100%);",
+				bgcolor2: "linear-gradient(-45deg, #C9E2B3 0%, rgba(222, 255, 243, 1) 100%);",
 				current: 7,
 				mode: '预付费',
 				hour: 1,
@@ -77,10 +82,17 @@
 				url: "http://" + this.$host + "/smallProgram/getParkingCount",
 				method: "GET",
 				success: function(result) {
-
 					that.current = result.data.data
 				}
 			})
+			
+			if(this.balance <=0 ){
+				wx.showToast({
+					title: '当前余额不足，请及时充值，以免影响您正常使用',
+					icon: 'none',
+					duration: 3000,
+				})
+			}
 			
 			this.$refs.checkbox.set({
 				type: 'radio', // 类型：单选框

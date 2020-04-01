@@ -2,10 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.intelligentparking.myparking.DAO.RechargeDao">
+    <resultMap id="rechargeRecordMap" type="RechargeRecord">
+        <id column="id" property="id"/>
+        <result column="fee" property="fee"/>
+        <result column="time" property="time"/>
+        <result column="uid" property="uid"/>
+        <result column="remark" property="remark"/>
+        <association property="user" javaType="User">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="phone" property="phone"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="parkingRecordMap" type="ParkingRecord">
+        <id column="id" property="id"/>
+        <result column="carLicence" property="carLicence"/>
+        <result column="startTime" property="startTime"/>
+        <result column="endTime" property="endTime"/>
+        <result column="fee" property="fee"/>
+        <result column="uid" property="uid"/>
+        <association property="user" javaType="User">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="phone" property="phone"/>
+        </association>
+    </resultMap>
+
 
     <insert id="addRechargeRecord">
-        insert into rechargerecord (fee,uid,time)
-		    values(#{fee},#{uid},now())
+        insert into rechargerecord (fee,uid,time,remark)
+		    values(#{fee},#{uid},now(),#{remark})
     </insert>
 
     <select id="getRechargeRecordByID" resultType="RechargeRecord">
@@ -14,4 +41,54 @@
             and fee > 0
         </if>
     </select>
+
+    <select id="getRechargeRecord" resultMap="rechargeRecordMap">
+        select * from rechargerecord inner join user on user.id = rechargerecord.uid
+        <where>
+            <trim prefixOverrides="or and">
+                <if test="remark != null">
+                    or remark = #{remark}
+                </if>
+                <if test="beginTime != null">
+                    and time between #{beginTime} and #{overTime}
+                </if>
+            </trim>
+        </where>
+        order by time desc
+    </select>
+
+
+    <select id="getCount" resultType="int">
+        select count(*) from rechargerecord
+        <where>
+            <trim prefixOverrides="or and">
+                <if test="remark != null">
+                    or remark = #{remark}
+                </if>
+                <if test="beginTime != null">
+                    and time between #{beginTime} and #{overTime}
+                </if>
+            </trim>
+        </where>
+    </select>
+
+    <select id="getParkingRecord" resultMap="parkingRecordMap">
+        select * from parkingrecord left join user on user.id = parkingrecord.uid
+        <where>
+            <if test="beginTime != null">
+                startTime between #{beginTime} and #{overTime}
+            </if>
+        </where>
+        order by startTime desc
+    </select>
+
+    <select id="getParkingCount" resultType="int">
+        select count(*) from parkingrecord
+        <where>
+            <if test="beginTime != null">
+                startTime between #{beginTime} and #{overTime}
+            </if>
+        </where>
+    </select>
+
 </mapper>

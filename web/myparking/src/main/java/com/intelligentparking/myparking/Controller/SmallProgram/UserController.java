@@ -68,7 +68,7 @@ public ResponseWrapper<User> getUser(@RequestParam String openid) {
         System.out.println("id ==========" + id);
         System.out.println("money ==========" + money);
         userService.recharge(id, money);
-        recordService.addRechargeRecord(Double.valueOf(money), id);
+        recordService.addRechargeRecord(Double.valueOf(money), id, "充值");
         return new ResponseWrapper<User>(ResponseStatus.OK, "充值成功",userService.checkMessage("id", String.valueOf(id)));
     }
 

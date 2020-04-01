@@ -30,7 +30,7 @@ public class RecordServiceImpl implements RecordService {
         return rechargeDao.getRechargeRecordByID(id, all);
     }
 
-    public void addRechargeRecord(double fee, int id){
-        rechargeDao.addRechargeRecord(fee,id);
+    public void addRechargeRecord(double fee, int id,String remark){
+        rechargeDao.addRechargeRecord(fee,id,remark);
     }
 }
