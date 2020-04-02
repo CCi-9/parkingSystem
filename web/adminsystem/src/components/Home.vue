@@ -23,9 +23,9 @@
                             <Icon type="ios-settings"></Icon>
                             停车状态
                         </template>
-                        <MenuItem name="4-1" @click.native="showMenu('/gCustomer')">停车场</MenuItem>
-                        <MenuItem name="4-2" @click.native="showMenu('/gManager')">目前预定用户</MenuItem>
-                        <MenuItem name="4-2" @click.native="showMenu('/gManager')">目前排队用户</MenuItem>
+                        <MenuItem name="4-1" @click.native="showMenu('/index/parkingCar')">停车场</MenuItem>
+                        <MenuItem name="4-2" @click.native="showMenu('/index/currentBook')">目前预定用户</MenuItem>
+                        <MenuItem name="4-3" @click.native="showMenu('/index/waitQueue')">目前排队用户</MenuItem>
                     </Submenu>
                 </Menu>
             </Sider>

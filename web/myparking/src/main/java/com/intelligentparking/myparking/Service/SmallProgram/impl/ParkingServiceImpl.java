@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -221,6 +219,37 @@ public class ParkingServiceImpl implements ParkingService {
 
         System.out.println("共停了 " + parkingDuration + " 小时");
         logger.info("当前剩余车位" + currentParkingCount.incrementAndGet());
+    }
+
+    @Override
+    public List<ParkingCar> getAllParkingCar() {
+        List<ParkingCar> list = new ArrayList<>();
+        for(Map.Entry<String, ParkingCar> entry : currentParkingCar.entrySet()){
+            list.add(entry.getValue());
+        }
+        System.out.println(list);
+        return list;
+    }
+
+    @Override
+    public List<ParkingBook> getCurrentBook() {
+        List<ParkingBook> list = new ArrayList<>();
+        for(Map.Entry<String, ParkingBook> entry : currentBook.entrySet()){
+            list.add(entry.getValue());
+        }
+        return list;
+    }
+
+    @Override
+    public List<ParkingBook> getWaitQueue() {
+        List<ParkingBook> list = new ArrayList<>();
+        Iterator<ParkingBook> iterator = waitQueue.iterator();
+
+        while (iterator.hasNext()) {
+            ParkingBook pb = iterator.next();
+            list.add(pb);
+        }
+        return list;
     }
 
     public String getParkingCar(String phone) {

@@ -7,6 +7,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 public class DES {
 
@@ -16,7 +17,7 @@ public class DES {
         String str = "123";
 //密码，长度要是8的倍数
         String password = "9588028820109132570743325311898426347857298773549468758875018579537757772163084478873699447306034466200616411960574122434059469100235892702736860872901247123456";
-
+        System.out.println(LocalDateTime.now());
         byte[] result = DES.encrypt(str.getBytes(),password);
         System.out.println("加密后："+new String(result));
 
